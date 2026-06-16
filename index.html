@@ -70,7 +70,6 @@ button{border:none;cursor:pointer}
   import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
-  // Suas credenciais oficiais do projeto ranking-embaixadores
   const firebaseConfig = {
     apiKey: "AIzaSyC2y5Aiu_3Zl2dDl6IXeCDVag5O3y-KKW0",
     authDomain: "ranking-embaixadores.firebaseapp.com",
@@ -85,7 +84,6 @@ button{border:none;cursor:pointer}
   let app, db, rankingRef, analytics;
   let dados = [];
 
-  // Monitoramento de Inicialização
   try {
     console.log("🔄 Conectando ao Firebase...");
     app = initializeApp(firebaseConfig);
@@ -95,48 +93,33 @@ button{border:none;cursor:pointer}
     console.log("✅ Conexão estabelecida com sucesso!");
   } catch (error) {
     console.error("❌ Erro crítico ao iniciar Firebase:", error);
-    alert("Falha de configuração interna. Verifique o console.");
   }
 
-  // Ouvinte em tempo real (Sincroniza todas as telas abertas)
   if (rankingRef) {
     onValue(rankingRef, (snapshot) => {
       const data = snapshot.val();
       dados = data ? Object.values(data) : [];
       updateInterface();
     }, (error) => {
-      console.error("❌ Erro de leitura do Banco de Dados (onValue):", error);
-      alert("Acesso negado ao ler dados. Verifique se as Regras de Segurança estão públicas.");
+      console.error("❌ Erro de leitura (onValue):", error);
+      alert("Erro ao ler dados. Verifique se as Regras do Database estão em Modo de Teste.");
     });
   }
 
-  // Envio e Gravação de dados no Firebase
   function saveData() {
-    if (!db || !rankingRef) {
-      console.error("❌ Ação abortada: Banco de dados indisponível.");
-      return;
-    }
-
-    console.log("📤 Enviando dados atualizados...", dados);
+    if (!db || !rankingRef) return;
 
     const dataObject = {};
     dados.forEach(p => {
-      // Normaliza o nome do usuário para servir de chave sem quebrar o Firebase
       const chaveSegura = p.nome.toLowerCase().replace(/[.#$/\[\]]/g, "_");
       dataObject[chaveSegura] = p; 
     });
 
     set(rankingRef, dataObject)
-      .then(() => {
-        console.log("🎉 Dados gravados com SUCESSO no Firebase!");
-      })
+      .then(() => { console.log("🎉 Guardado com sucesso no Firebase!"); })
       .catch((error) => {
-        console.error("❌ ERRO ao gravar dados no Firebase:", error);
-        if (error.message.includes("PERMISSION_DENIED")) {
-          alert("Erro: Permissão negada! Ative o 'Modo de Teste' nas Regras do Realtime Database.");
-        } else {
-          alert("Falha ao salvar. Detalhes no console (F12).");
-        }
+        console.error("❌ Erro ao gravar:", error);
+        alert("Erro ao salvar dados. Verifique as regras do Firebase.");
       });
   }
 
@@ -166,11 +149,15 @@ button{border:none;cursor:pointer}
     document.getElementById("lastUpdate").innerText=new Date().toLocaleTimeString();
   }
 
-  // Funções globais mapeadas para uso nos cliques dos botões HTML
+  function removePlayerFromData(nome) {
+    dados=dados.filter(x=>x.nome!==nome);
+  }
+
+  // Mapeamento Global correto de todas as funções
   window.execCmd = function() {
     let t=document.getElementById("cmd").value.trim();
     let m=t.match(/([+-]\d+)\s+(.+)/);
-    if(!m){alert("Use: +5 João");return;}
+    if(!m){alert("Use o formato: +5 João ou -2 Maria");return;}
     let valor=parseInt(m[1]), nome=m[2];
     let p=dados.find(x=>x.nome.toLowerCase()==nome.toLowerCase());
     if(p) p.pontos+=valor; else dados.push({nome:nome,pontos:valor});
@@ -191,9 +178,9 @@ button{border:none;cursor:pointer}
     if(!nome) return;
     let p=dados.find(x=>x.nome.toLowerCase()===nome.toLowerCase());
     if(p) {
-      change(nome, v);
+      window.change(nome, v);
     } else {
-      if(confirm(`Participante "${nome}" não existe. Criar com ${v} pontos?`)){
+      if(confirm(`O participante "${nome}" não existe. Criar com ${v} pontos?`)){
         dados.push({nome: nome, pontos: v});
         saveData();
       }
@@ -213,14 +200,10 @@ button{border:none;cursor:pointer}
   }
 
   window.removePlayer = function(nome) {
-    if(confirm("Excluir "+nome+"?")){
+    if(confirm("Eliminar "+nome+"?")){
       removePlayerFromData(nome);
       saveData();
     }
-  }
-
-  function removePlayerFromData(nome) {
-    dados=dados.filter(x=>x.nome!==nome);
   }
 
   window.exportCSV = function() {
@@ -252,7 +235,7 @@ button{border:none;cursor:pointer}
   }
 
   window.toggleTelao = function() {
-    document.body.id=document.body.id Pac==="telao"?"":"telao";
+    document.body.id=document.body.id==="telao"?"":"telao";
   }
 </script>
 </body>
