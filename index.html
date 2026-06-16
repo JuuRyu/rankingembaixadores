@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ranking da Gincana</title>
+<style>
+:root{--azul:#072b63;--azul2:#0b4db3;--dourado:#ffc928;--verde:#28a745;--vermelho:#dc3545}
+*{box-sizing:border-box} body{margin:0;font-family:Arial;background:#eef2f7}
+header{background:linear-gradient(135deg,var(--azul),var(--azul2));color:#fff;padding:20px;text-align:center}
+header h1{color:var(--dourado);margin:0}
+.container{padding:15px;max-width:1200px;margin:auto}
+.card{background:#fff;border-radius:15px;padding:15px;margin-bottom:15px;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+input,button{padding:12px;border-radius:10px}
+input{width:100%;border:1px solid #ccc}
+button{border:none;cursor:pointer}
+.blue{background:var(--azul2);color:#fff}.green{background:var(--verde);color:#fff}.red{background:var(--vermelho);color:#fff}
+.actions button{margin:4px}
+.item{display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,#001b42,#003d8f);color:#fff;padding:12px;border-radius:12px;margin:8px 0}
+.medal{font-size:32px}.name{flex:1;font-size:22px;font-weight:bold}.score{font-size:28px;color:var(--dourado)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.stat{background:#fff;padding:15px;border-radius:12px;text-align:center}
+#telao .controls{display:none} #telao .item{font-size:1.7em;padding:24px}
+</style>
+</head>
+<body>
+<header>
+<h1>🏆 RANKING DA GINCANA</h1>
+<p>Somar pontos, fazer história!</p>
+</header>
+
+<div class="container">
+<div class="card controls">
+<input id="cmd" list="nomes" placeholder="+5 João ou -2 Maria">
+<datalist id="nomes"></datalist><br><br>
+<button class="blue" onclick="execCmd()">Executar</button>
+<button class="green" onclick="exportCSV()">Exportar CSV</button>
+<button class="blue" onclick="toggleTelao()">Modo Telão</button>
+<input type="file" id="importFile" style="display:none" onchange="importCSV(event)">
+<button class="green" onclick="document.getElementById('importFile').click()">Importar CSV</button>
+</div>
+
+<div class="card controls">
+<h3>⚡ Ações rápidas</h3>
+<input id="quickName" list="nomes" placeholder="Nome do participante"><br><br>
+<div class="actions">
+<button class="green" onclick="quick(1)">+1</button>
+<button class="green" onclick="quick(5)">+5</button>
+<button class="red" onclick="quick(-1)">-1</button>
+<button class="red" onclick="quick(-5)">-5</button>
+</div>
+</div>
+
+<div class="card">
+<div class="stats">
+<div class="stat"><h3 id="totalP">0</h3><p>Participantes</p></div>
+<div class="stat"><h3 id="topScore">0</h3><p>Maior Pontuação</p></div>
+<div class="stat"><h3 id="lastUpdate">-</h3><p>Última Atualização</p></div>
+</div>
+</div>
+
+<div class="card">
+<h2>🥇 Ranking Geral</h2>
+<div id="ranking"></div>
+</div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  // ⚠️ SUBSTITUA COM AS CREDENCIAIS DO SEU PROJETO FIREBASE
+  const firebaseConfig = {
+    apiKey: "SUA_API_KEY",
+    authDomain: "SEU_PROJETO.firebaseapp.com",
+    databaseURL: "https://SEU_PROJETO-default-rtdb.firebaseio.com",
+    projectId: "SEU_PROJETO",
+    storageBucket: "SEU_PROJETO.appspot.com",
+    messagingSenderId: "SEU_SENDER_ID",
+    appId: "SEU_APP_ID"
+  };
+
+  // Inicializa o Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const rankingRef = ref(db, 'gincana/ranking');
+
+  let dados = [];
+
+  // Ouvinte em tempo real: Atualiza a tela sempre que o banco de dados mudar
+  onValue(rankingRef, (snapshot) => {
+    const data = snapshot.val();
+    dados = data ? Object.values(data) : [];
+    updateInterface();
+  });
+
+  // Salva o estado atual no Firebase
+  function saveData() {
+    // Transforma a array em um objeto indexado pelo nome para evitar duplicados no banco
+    const dataObject = {};
+    dados.forEach(p => {
+      dataObject[p.nome.toLowerCase().replace(/[.#$/\[\]]/g, "_")] = p; 
+    });
+    set(rankingRef, dataObject);
+  }
+
+  function medal(i){return i==0?"🥇":i==1?"🥈":i==2?"🥉":(i+1);}
+
+  function updateInterface() {
+    dados.sort((a,b)=>b.pontos-a.pontos);
+
+    document.getElementById("ranking").innerHTML=dados.map((p,i)=>`
+    <div class="item">
+    <div class="medal">${medal(i)}</div>
+    <div class="name">${p.nome}</div>
+    <div class="score">${p.pontos}</div>
+    <div class="controls">
+    <button class="green" onclick="change('${p.nome}',1)">+1</button>
+    <button class="green" onclick="change('${p.nome}',5)">+5</button>
+    <button class="red" onclick="change('${p.nome}',-1)">-1</button>
+    <button class="red" onclick="change('${p.nome}',-5)">-5</button>
+    <button class="blue" onclick="renamePlayer('${p.nome}')">✏️</button>
+    <button class="red" onclick="removePlayer('${p.nome}')">🗑️</button>
+    </div>
+    </div>`).join("");
+
+    document.getElementById("nomes").innerHTML=dados.map(p=>`<option value="${p.nome}">`).join("");
+    document.getElementById("totalP").innerText=dados.length;
+    document.getElementById("topScore").innerText=dados[0]?.pontos||0;
+    document.getElementById("lastUpdate").innerText=new Date().toLocaleTimeString();
+  }
+
+  // Funções globais mapeadas para o escopo do módulo
+  window.execCmd = function() {
+    let t=document.getElementById("cmd").value.trim();
+    let m=t.match(/([+-]\d+)\s+(.+)/);
+    if(!m){alert("Use: +5 João");return;}
+    let valor=parseInt(m[1]), nome=m[2];
+    let p=dados.find(x=>x.nome.toLowerCase()==nome.toLowerCase());
+    if(p) p.pontos+=valor; else dados.push({nome:nome,pontos:valor});
+    document.getElementById("cmd").value="";
+    saveData();
+  }
+
+  window.change = function(nome, v) {
+    let p=dados.find(x=>x.nome.toLowerCase()===nome.toLowerCase());
+    if(p){
+      p.pontos+=v;
+      saveData();
+    }
+  }
+
+  window.quick = function(v) {
+    let nome=document.getElementById("quickName").value.trim();
+    if(!nome) return;
+    let p=dados.find(x=>x.nome.toLowerCase()===nome.toLowerCase());
+    if(p) {
+      change(nome, v);
+    } else {
+      if(confirm(`Participante "${nome}" não existe. Criar com ${v} pontos?`)){
+        dados.push({nome: nome, pontos: v});
+        saveData();
+      }
+    }
+    document.getElementById("quickName").value = "";
+  }
+
+  window.renamePlayer = function(nome) {
+    let novo=prompt("Novo nome:",nome);
+    if(!novo)return;
+    let p = dados.find(x=>x.nome===nome);
+    if(p) {
+      // Remove o registro antigo para evitar lixo no Firebase
+      removePlayerFromData(nome);
+      dados.push({nome: novo, pontos: p.pontos});
+      saveData();
+    }
+  }
+
+  window.removePlayer = function(nome) {
+    if(confirm("Excluir "+nome+"?")){
+      removePlayerFromData(nome);
+      saveData();
+    }
+  }
+
+  function removePlayerFromData(nome) {
+    dados=dados.filter(x=>x.nome!==nome);
+  }
+
+  window.exportCSV = function() {
+    let csv="Nome;Pontos\n"+dados.map(p=>`${p.nome};${p.pontos}`).join("\n");
+    let a=document.createElement("a");
+    a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+    a.download="ranking.csv";
+    a.click();
+  }
+
+  window.importCSV = function(e) {
+    const file=e.target.files[0];
+    if(!file)return;
+    const r=new FileReader();
+    r.onload=function(){
+      const linhas=r.result.split(/\r?\n/).slice(1);
+      linhas.forEach(l=>{
+        const c=l.split(";");
+        if(c.length Rez>=2 && c[0].trim() !== "") {
+          let nome = c[0].trim();
+          let pontos = Number(c[1])||0;
+          let p=dados.find(x=>x.nome.toLowerCase()==nome.toLowerCase());
+          if(p) p.pontos = pontos; else dados.push({nome:nome,pontos:pontos});
+        }
+      });
+      saveData();
+    }
+    r.readAsText(file);
+  }
+
+  window.toggleTelao = function() {
+    document.body.id=document.body.id Pac==="telao"?"":"telao";
+  }
+</script>
+</body>
+</html>
