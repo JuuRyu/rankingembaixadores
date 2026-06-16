@@ -68,40 +68,76 @@ button{border:none;cursor:pointer}
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
-  // ⚠️ SUBSTITUA COM AS CREDENCIAIS DO SEU PROJETO FIREBASE
+  // Suas credenciais oficiais do projeto ranking-embaixadores
   const firebaseConfig = {
-    apiKey: "SUA_API_KEY",
-    authDomain: "SEU_PROJETO.firebaseapp.com",
-    databaseURL: "https://SEU_PROJETO-default-rtdb.firebaseio.com",
-    projectId: "SEU_PROJETO",
-    storageBucket: "SEU_PROJETO.appspot.com",
-    messagingSenderId: "SEU_SENDER_ID",
-    appId: "SEU_APP_ID"
+    apiKey: "AIzaSyC2y5Aiu_3Zl2dDl6IXeCDVag5O3y-KKW0",
+    authDomain: "ranking-embaixadores.firebaseapp.com",
+    databaseURL: "https://ranking-embaixadores-default-rtdb.firebaseio.com",
+    projectId: "ranking-embaixadores",
+    storageBucket: "ranking-embaixadores.firebasestorage.app",
+    messagingSenderId: "841956353715",
+    appId: "1:841956353715:web:e0d6512b252d599236f2c6",
+    measurementId: "G-2ETYL3D1EK"
   };
 
-  // Inicializa o Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  const rankingRef = ref(db, 'gincana/ranking');
-
+  let app, db, rankingRef, analytics;
   let dados = [];
 
-  // Ouvinte em tempo real: Atualiza a tela sempre que o banco de dados mudar
-  onValue(rankingRef, (snapshot) => {
-    const data = snapshot.val();
-    dados = data ? Object.values(data) : [];
-    updateInterface();
-  });
+  // Monitoramento de Inicialização
+  try {
+    console.log("🔄 Conectando ao Firebase...");
+    app = initializeApp(firebaseConfig);
+    db = getDatabase(app);
+    analytics = getAnalytics(app);
+    rankingRef = ref(db, 'gincana/ranking');
+    console.log("✅ Conexão estabelecida com sucesso!");
+  } catch (error) {
+    console.error("❌ Erro crítico ao iniciar Firebase:", error);
+    alert("Falha de configuração interna. Verifique o console.");
+  }
 
-  // Salva o estado atual no Firebase
+  // Ouvinte em tempo real (Sincroniza todas as telas abertas)
+  if (rankingRef) {
+    onValue(rankingRef, (snapshot) => {
+      const data = snapshot.val();
+      dados = data ? Object.values(data) : [];
+      updateInterface();
+    }, (error) => {
+      console.error("❌ Erro de leitura do Banco de Dados (onValue):", error);
+      alert("Acesso negado ao ler dados. Verifique se as Regras de Segurança estão públicas.");
+    });
+  }
+
+  // Envio e Gravação de dados no Firebase
   function saveData() {
-    // Transforma a array em um objeto indexado pelo nome para evitar duplicados no banco
+    if (!db || !rankingRef) {
+      console.error("❌ Ação abortada: Banco de dados indisponível.");
+      return;
+    }
+
+    console.log("📤 Enviando dados atualizados...", dados);
+
     const dataObject = {};
     dados.forEach(p => {
-      dataObject[p.nome.toLowerCase().replace(/[.#$/\[\]]/g, "_")] = p; 
+      // Normaliza o nome do usuário para servir de chave sem quebrar o Firebase
+      const chaveSegura = p.nome.toLowerCase().replace(/[.#$/\[\]]/g, "_");
+      dataObject[chaveSegura] = p; 
     });
-    set(rankingRef, dataObject);
+
+    set(rankingRef, dataObject)
+      .then(() => {
+        console.log("🎉 Dados gravados com SUCESSO no Firebase!");
+      })
+      .catch((error) => {
+        console.error("❌ ERRO ao gravar dados no Firebase:", error);
+        if (error.message.includes("PERMISSION_DENIED")) {
+          alert("Erro: Permissão negada! Ative o 'Modo de Teste' nas Regras do Realtime Database.");
+        } else {
+          alert("Falha ao salvar. Detalhes no console (F12).");
+        }
+      });
   }
 
   function medal(i){return i==0?"🥇":i==1?"🥈":i==2?"🥉":(i+1);}
@@ -130,7 +166,7 @@ button{border:none;cursor:pointer}
     document.getElementById("lastUpdate").innerText=new Date().toLocaleTimeString();
   }
 
-  // Funções globais mapeadas para o escopo do módulo
+  // Funções globais mapeadas para uso nos cliques dos botões HTML
   window.execCmd = function() {
     let t=document.getElementById("cmd").value.trim();
     let m=t.match(/([+-]\d+)\s+(.+)/);
@@ -170,7 +206,6 @@ button{border:none;cursor:pointer}
     if(!novo)return;
     let p = dados.find(x=>x.nome===nome);
     if(p) {
-      // Remove o registro antigo para evitar lixo no Firebase
       removePlayerFromData(nome);
       dados.push({nome: novo, pontos: p.pontos});
       saveData();
@@ -204,7 +239,7 @@ button{border:none;cursor:pointer}
       const linhas=r.result.split(/\r?\n/).slice(1);
       linhas.forEach(l=>{
         const c=l.split(";");
-        if(c.length Rez>=2 && c[0].trim() !== "") {
+        if(c.length >= 2 && c[0].trim() !== "") {
           let nome = c[0].trim();
           let pontos = Number(c[1])||0;
           let p=dados.find(x=>x.nome.toLowerCase()==nome.toLowerCase());
