@@ -1,5 +1,3 @@
-
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -24,45 +22,45 @@ body {
   margin: 0; 
   background-color: var(--bg-principal); 
   color: #333333;
-  padding-bottom: 80px; /* Espaço para a barra inferior fixa */
+  padding-bottom: 80px;
 }
 
-/* HEADER PREMIUM */
+/* HEADER FLEXÍVEL SEM SOBREPOSIÇÃO NO MOBILE */
 header {
   background: linear-gradient(180deg, #021a3a 0%, #001127 100%);
   color: #fff;
-  padding: 20px 10px;
+  padding: 15px 10px;
   text-align: center;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
   border-bottom: 2px solid #042958;
 }
 header h1 {
   color: #fff;
   margin: 0;
-  font-size: 1.6em;
+  font-size: 1.5em;
   font-weight: 900;
   letter-spacing: 1px;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
-header p { margin: 5px 0 0 0; font-size: 0.9em; color: var(--dourado); font-weight: bold; }
+header p { margin: 0; font-size: 0.85em; color: var(--dourado); font-weight: bold; }
 
 .btn-telao {
-  position: absolute;
-  top: 18px;
-  right: 12px;
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
   text-decoration: none;
-  padding: 6px 10px;
+  padding: 6px 14px;
   border-radius: 8px;
-  font-size: 0.75em;
+  font-size: 0.8em;
   font-weight: bold;
   border: 1px solid rgba(255,255,255,0.2);
+  margin-top: 4px;
+  display: inline-block;
 }
 
 .container { padding: 12px; max-width: 600px; margin: auto; }
 
-/* ESTILIZAÇÃO DOS CARDS ESTILO APP */
 .card {
   background: var(--bg-card);
   border-radius: 16px;
@@ -81,7 +79,6 @@ header p { margin: 5px 0 0 0; font-size: 0.9em; color: var(--dourado); font-weig
   gap: 6px;
 }
 
-/* INPUTS E BOTÕES COMPATÍVEIS COM TOUCH */
 input, button { padding: 12px; border-radius: 10px; font-size: 14px; }
 input { 
   width: 100%; 
@@ -95,23 +92,16 @@ input:focus { border-color: var(--azul-botao); background: #fff; }
 button { border: none; cursor: pointer; font-weight: bold; touch-action: manipulation; transition: transform 0.1s; }
 button:active { transform: scale(0.96); }
 
-/* DO DESIGN DA IMAGEM: COMPONENTES DE ENVELOPE DO TERMINAL */
 .terminal-wrapper { position: relative; display: flex; gap: 6px; }
 .btn-enviar-cmd { background: var(--azul-botao); color: white; width: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 
-/* GRID DE AÇÕES DO CARD SUPERIOR */
 .grid-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
 .grid-actions button { font-size: 12px; padding: 10px; }
 
-/* GRID DE AÇÕES RÁPIDAS (BOTÕES GRANDES COLORIDOS) */
 .grid-quick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .grid-quick button { 
-  display: flex; 
-  flex-direction: column; 
-  align-items: center; 
-  justify-content: center; 
-  padding: 14px 10px;
-  border-radius: 12px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; 
+  padding: 14px 10px; border-radius: 12px;
 }
 .grid-quick button span:first-child { font-size: 1.5em; font-weight: 900; }
 .grid-quick button span:last-child { font-size: 0.75em; font-weight: bold; opacity: 0.9; margin-top: 2px; }
@@ -119,32 +109,21 @@ button:active { transform: scale(0.96); }
 .btn-q-verde { background: var(--verde); color: #fff; }
 .btn-q-vermelho { background: var(--vermelho); color: #fff; }
 
-/* PAINEL DE METRICAS */
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .stat { background: #f8fafc; padding: 10px 4px; border-radius: 12px; text-align: center; border: 1px solid #e2e8f0; }
 .stat h4 { margin: 0; font-size: 1.1em; color: var(--azul-escuro); font-weight: 800; }
 .stat p { margin: 3px 0 0 0; color: #64748b; font-size: 0.7em; font-weight: bold; text-transform: uppercase; }
 
-/* COMPONENTES DO RANKING INTERNO (REMODELADO) */
 #ranking { position: relative; }
 .item { 
-  display: flex; 
-  flex-direction: column; 
-  background: var(--bg-item); 
-  color: #fff; 
-  padding: 12px; 
-  border-radius: 14px; 
-  margin: 10px 0;
+  display: flex; flex-direction: column; background: var(--bg-item); color: #fff; 
+  padding: 12px; border-radius: 14px; margin: 10px 0;
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
   will-change: transform, background-color;
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.4s ease;
 }
 
-/* ✨ ESTILO ANIMAÇÃO FLASH AMARELO MOSTARDA MAIS AMARELADO */
-.item.flash-update {
-  background: var(--mostarda-vibrante) !important;
-  transform: scale(1.02);
-}
+.item.flash-update { background: var(--mostarda-vibrante) !important; transform: scale(1.02); }
 
 .row-top { display: flex; align-items: center; gap: 10px; width: 100%; margin-bottom: 8px; }
 .medal { 
@@ -159,13 +138,16 @@ button:active { transform: scale(0.96); }
 .name { flex: 1; font-size: 15px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .score { font-size: 18px; color: var(--dourado); font-weight: bold; padding-right: 2px; }
 
-/* BOTÕES INTERNOS ROLÁVEIS DO PARTICIPANTE */
+/* ESTILO REDUZIDO APÓS A 10ª POSIÇÃO EM ADMIN */
+.item-small .name { font-size: 13px; opacity: 0.85; }
+.item-small .score { font-size: 16px; }
+.item-small { padding: 8px 12px; margin: 6px 0; }
+
 .row-controls { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; width: 100%; scrollbar-width: none; }
 .row-controls::-webkit-scrollbar { display: none; }
 .row-controls button { padding: 8px 12px; font-size: 12px; flex-shrink: 0; border-radius: 8px; }
 .btn-action-small { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.1); }
 
-/* BARRA DE NAVEGAÇÃO INFERIOR FIXA DO APP */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; width: 100%; height: 65px;
   background: #021227; border-top: 2px solid #05234c;
@@ -179,7 +161,6 @@ button:active { transform: scale(0.96); }
 .nav-tab.active { color: var(--azul-botao); }
 .nav-tab .icon { font-size: 18px; margin-bottom: 2px; }
 
-/* BOTÃO DE ADICIONAR CENTRALIZADO EM DESTAQUE */
 .nav-tab.center-add { position: relative; top: -15px; height: 60px; }
 .nav-tab.center-add .icon-wrapper {
   background: linear-gradient(135deg, #ffd700 0%, #cc9900 100%);
@@ -189,7 +170,6 @@ button:active { transform: scale(0.96); }
 }
 .nav-tab.center-add .icon { color: #001635; font-size: 26px; font-weight: 900; margin: 0; }
 
-/* TELA DE LOGIN OVERLAY */
 #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-principal); display: flex; align-items: center; justify-content: center; z-index: 99999; padding: 16px; }
 #loginBox { background: #fff; padding: 26px; border-radius: 16px; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 #appContent { display: none; }
@@ -202,7 +182,7 @@ button:active { transform: scale(0.96); }
     <h3 style="color: var(--azul-escuro); margin-top: 0;">🔐 Área Restrita Admin</h3>
     <p style="color: #666; font-size: 14px; margin-bottom: 20px;">Insira a senha master do painel:</p>
     <input type="password" id="passInput" placeholder="Senha Administrativa" onkeypress="if(event.key==='Enter') verificarSenha()"><br><br>
-    <button class="blue" style="width:100%; background: var(--azul-escuro);" onclick="verificarSenha()">Entrar no Painel</button>
+    <button class="blue" style="width:100%; background: var(--azul-escuro);" onclick="verificarSenha()">Entrar no Panel</button>
   </div>
 </div>
 
@@ -214,7 +194,6 @@ button:active { transform: scale(0.96); }
   </header>
 
   <div class="container">
-    
     <div class="card">
       <h3><span>💻</span> TERMINAL DE COMANDOS</h3>
       <div class="terminal-wrapper">
@@ -285,7 +264,7 @@ button:active { transform: scale(0.96); }
 
   let app, db, rankingRef, analytics;
   let dados = [];
-  let pontuouRecente = null; // Guarda quem mudou de nota para ativar o flash mostarda
+  let pontuouRecente = null;
 
   const hashCorreto = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9"; 
 
@@ -337,11 +316,11 @@ button:active { transform: scale(0.96); }
     set(rankingRef, dataObject);
   }
 
-  function renderMedal(i) {
-    if (i == 0) return "🥇";
-    if (i == 1) return "🥈";
-    if (i == 2) return "🥉";
-    return `<span class="num-circle">${i + 1}</span>`;
+  function renderMedal(posExibida) {
+    if (posExibida == 1) return "🥇";
+    if (posExibida == 2) return "🥈";
+    if (posExibida == 3) return "🥉";
+    return `<span class="num-circle">${posExibida}</span>`;
   }
 
   function updateInterface() {
@@ -356,16 +335,23 @@ button:active { transform: scale(0.96); }
       if (nome) posicoesAntigas[nome] = item.getBoundingClientRect().top;
     });
 
-    container.innerHTML = dados.map((p,i)=> {
-      // Verifica se o participante atual foi quem recebeu pontos recentemente para aplicar a classe de animação
+    let htmlOutput = "";
+    let posicaoAtual = 1;
+
+    dados.forEach((p, i) => {
+      if (i > 0 && p.pontos < dados[i - 1].pontos) {
+        posicaoAtual = i + 1;
+      }
+
       const devesPiscar = (pontuouRecente === p.nome.toLowerCase()) ? 'flash-update' : '';
-      
-      return `
-      <div class="item ${devesPiscar}" data-nome="${p.nome}">
+      const classeTamanho = (posicaoAtual > 10) ? 'item-small' : '';
+
+      htmlOutput += `
+      <div class="item ${devesPiscar} ${classeTamanho}" data-nome="${p.nome}">
         <div class="row-top">
-          <div class="medal">${renderMedal(i)}</div>
+          <div class="medal">${renderMedal(posicaoAtual)}</div>
           <div class="name">${p.nome}</div>
-          <div class="score">${p.pontos} pts</div>
+          <div class="score">${p.pontos}</div>
         </div>
         <div class="row-controls">
           <button class="btn-action-small" style="background:var(--verde);" onclick="change('${p.nome}',1)">+1</button>
@@ -376,9 +362,10 @@ button:active { transform: scale(0.96); }
           <button class="btn-action-small" style="background:#4b6584;" onclick="removePlayer('${p.nome}')">🗑️ Apagar</button>
         </div>
       </div>`;
-    }).join("");
+    });
 
-    // Aplica o efeito FLIP de movimentação
+    container.innerHTML = htmlOutput;
+
     Array.from(container.children).forEach(item => {
       const nome = item.dataset.nome;
       const posAntiga = posicoesAntigas[nome];
@@ -396,7 +383,6 @@ button:active { transform: scale(0.96); }
       }
     });
 
-    // Se houver um card piscando amarelo, remove o efeito após 1.2 segundos
     if(pontuouRecente) {
       setTimeout(() => {
         const elementoPiscando = container.querySelector('.flash-update');
@@ -422,7 +408,7 @@ button:active { transform: scale(0.96); }
     let valor=parseInt(m[1]), nome=m[2];
     let p=dados.find(x=>x.nome.toLowerCase()==nome.toLowerCase());
     
-    pontuouRecente = nome.toLowerCase(); // Ativa o gatilho do flash
+    pontuouRecente = nome.toLowerCase();
     if(p) p.pontos+=valor; else dados.push({nome:nome,pontos:valor});
     
     document.getElementById("cmd").value="";
@@ -432,7 +418,7 @@ button:active { transform: scale(0.96); }
   window.change = function(nome, v) {
     let p=dados.find(x=>x.nome.toLowerCase()===nome.toLowerCase());
     if(p){
-      pontuouRecente = nome.toLowerCase(); // Ativa o gatilho do flash
+      pontuouRecente = nome.toLowerCase();
       p.pontos+=v;
       saveData();
     }
@@ -443,7 +429,7 @@ button:active { transform: scale(0.96); }
     if(!nome) { alert("Por favor, digite ou selecione um participante primeiro."); return; }
     let p=dados.find(x=>x.nome.toLowerCase()===nome.toLowerCase());
     
-    pontuouRecente = nome.toLowerCase(); // Ativa o gatilho do flash
+    pontuouRecente = nome.toLowerCase();
     if(p) {
       window.change(nome, v);
     } else {
@@ -507,5 +493,3 @@ button:active { transform: scale(0.96); }
 </script>
 </body>
 </html>
-
-```
