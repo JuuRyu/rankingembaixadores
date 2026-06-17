@@ -1,132 +1,269 @@
+
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Painel Admin - Celular</title>
+<title>Painel Admin - Embaixadores do Rei</title>
 <style>
-:root{--azul:#072b63;--azul2:#0b4db3;--dourado:#ffc928;--verde:#28a745;--vermelho:#dc3545}
-*{box-sizing:border-box} 
-body{margin:0;font-family:Arial,sans-serif;background:#eef2f7;padding-bottom:30px}
-header{background:linear-gradient(135deg,var(--azul),var(--azul2));color:#fff;padding:15px 10px;text-align:center}
-header h1{color:var(--dourado);margin:0;font-size:1.5em}
-header p{margin:4px 0 0 0;font-size:0.9em;opacity:0.8}
-.container{padding:8px;max-width:600px;margin:auto}
-.card{background:#fff;border-radius:12px;padding:12px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
-.card h3{margin-top:0;margin-bottom:10px;color:#333;font-size:1.1em}
-input,button{padding:12px;border-radius:8px;font-size:14px}
-input{width:100%;border:1px solid #ccc;outline:none}
-input:focus{border-color:var(--azul2)}
-button{border:none;cursor:pointer;font-weight:bold;touch-action:manipulation}
-.blue{background:var(--azul2);color:#fff}.green{background:var(--verde);color:#fff}.red{background:var(--vermelho);color:#fff}
-
-.grid-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
-.grid-actions button, .grid-actions a{width:100%;text-align:center;font-size:13px}
-.grid-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-
-#ranking {position: relative;}
-
-.item{display:flex;flex-direction:column;background:linear-gradient(90deg,#001b42,#003d8f);color:#fff;padding:10px;border-radius:10px;margin:8px 0;
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.row-top{display:flex;align-items:center;gap:8px;width:100%;margin-bottom:8px}
-
-.medal{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size:20px;
-  font-weight:bold;
-  width:28px;
-  height: 28px;
-  text-align:center;
-  flex-shrink: 0;
+:root {
+  --bg-principal: #001635;
+  --bg-card: #ffffff;
+  --bg-item: #03234d;
+  --azul-botao: #0056b3;
+  --azul-escuro: #072b63;
+  --dourado: #ffc928;
+  --verde: #21a23e;
+  --vermelho: #d63031;
+  --mostarda-vibrante: #e1ad01;
 }
 
-/* CIRCULO PARA PAGINA ADMIN */
-.num-circle {
-  background: #fff;
-  color: var(--azul2);
-  font-size: 13px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+* { box-sizing: border-box; font-family: 'Arial', sans-serif; } 
+body { 
+  margin: 0; 
+  background-color: var(--bg-principal); 
+  color: #333333;
+  padding-bottom: 80px; /* Espaço para a barra inferior fixa */
+}
+
+/* HEADER PREMIUM */
+header {
+  background: linear-gradient(180deg, #021a3a 0%, #001127 100%);
+  color: #fff;
+  padding: 20px 10px;
+  text-align: center;
+  position: relative;
+  border-bottom: 2px solid #042958;
+}
+header h1 {
+  color: #fff;
+  margin: 0;
+  font-size: 1.6em;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+header p { margin: 5px 0 0 0; font-size: 0.9em; color: var(--dourado); font-weight: bold; }
+
+.btn-telao {
+  position: absolute;
+  top: 18px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.75em;
+  font-weight: bold;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.container { padding: 12px; max-width: 600px; margin: auto; }
+
+/* ESTILIZAÇÃO DOS CARDS ESTILO APP */
+.card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: var(--azul-escuro);
+  font-size: 1.05em;
+  font-weight: bold;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 6px;
+}
+
+/* INPUTS E BOTÕES COMPATÍVEIS COM TOUCH */
+input, button { padding: 12px; border-radius: 10px; font-size: 14px; }
+input { 
+  width: 100%; 
+  border: 2px solid #e1e8ef; 
+  background: #f7f9fc;
+  outline: none; 
+  color: #333;
   font-weight: bold;
 }
+input:focus { border-color: var(--azul-botao); background: #fff; }
+button { border: none; cursor: pointer; font-weight: bold; touch-action: manipulation; transition: transform 0.1s; }
+button:active { transform: scale(0.96); }
 
-.name{flex:1;font-size:16px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.score{font-size:20px;color:var(--dourado);font-weight:bold;padding-right:5px}
+/* DO DESIGN DA IMAGEM: COMPONENTES DE ENVELOPE DO TERMINAL */
+.terminal-wrapper { position: relative; display: flex; gap: 6px; }
+.btn-enviar-cmd { background: var(--azul-botao); color: white; width: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 
-.row-controls{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;width:100%;scrollbar-width:none}
-.row-controls::-webkit-scrollbar{display:none}
-.row-controls button{padding:8px 12px;font-size:12px;flex-shrink:0;border-radius:6px}
+/* GRID DE AÇÕES DO CARD SUPERIOR */
+.grid-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
+.grid-actions button { font-size: 12px; padding: 10px; }
 
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.stat{background:#fff;padding:8px 4px;border-radius:10px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
-.stat h3{margin:0;font-size:1.1em;color:var(--azul2)}
-.stat p{margin:2px 0 0 0;color:#666;font-size:0.7em}
+/* GRID DE AÇÕES RÁPIDAS (BOTÕES GRANDES COLORIDOS) */
+.grid-quick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.grid-quick button { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+  padding: 14px 10px;
+  border-radius: 12px;
+}
+.grid-quick button span:first-child { font-size: 1.5em; font-weight: 900; }
+.grid-quick button span:last-child { font-size: 0.75em; font-weight: bold; opacity: 0.9; margin-top: 2px; }
 
-#loginOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:#072b63;display:flex;align-items:center;justify-content:center;z-index:9999;padding:16px}
-#loginBox{background:#fff;padding:24px;border-radius:12px;max-width:360px;width:100%;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,0.3)}
-#appContent{display:none}
+.btn-q-verde { background: var(--verde); color: #fff; }
+.btn-q-vermelho { background: var(--vermelho); color: #fff; }
+
+/* PAINEL DE METRICAS */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.stat { background: #f8fafc; padding: 10px 4px; border-radius: 12px; text-align: center; border: 1px solid #e2e8f0; }
+.stat h4 { margin: 0; font-size: 1.1em; color: var(--azul-escuro); font-weight: 800; }
+.stat p { margin: 3px 0 0 0; color: #64748b; font-size: 0.7em; font-weight: bold; text-transform: uppercase; }
+
+/* COMPONENTES DO RANKING INTERNO (REMODELADO) */
+#ranking { position: relative; }
+.item { 
+  display: flex; 
+  flex-direction: column; 
+  background: var(--bg-item); 
+  color: #fff; 
+  padding: 12px; 
+  border-radius: 14px; 
+  margin: 10px 0;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  will-change: transform, background-color;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.4s ease;
+}
+
+/* ✨ ESTILO ANIMAÇÃO FLASH AMARELO MOSTARDA MAIS AMARELADO */
+.item.flash-update {
+  background: var(--mostarda-vibrante) !important;
+  transform: scale(1.02);
+}
+
+.row-top { display: flex; align-items: center; gap: 10px; width: 100%; margin-bottom: 8px; }
+.medal { 
+  display: flex; align-items: center; justify-content: center; 
+  font-size: 18px; font-weight: bold; width: 30px; height: 30px; flex-shrink: 0; 
+}
+.num-circle { 
+  background: #ffffff; color: var(--bg-item); font-size: 12px; 
+  width: 24px; height: 24px; border-radius: 50%; display: flex; 
+  align-items: center; justify-content: center; font-weight: bold; 
+}
+.name { flex: 1; font-size: 15px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.score { font-size: 18px; color: var(--dourado); font-weight: bold; padding-right: 2px; }
+
+/* BOTÕES INTERNOS ROLÁVEIS DO PARTICIPANTE */
+.row-controls { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; width: 100%; scrollbar-width: none; }
+.row-controls::-webkit-scrollbar { display: none; }
+.row-controls button { padding: 8px 12px; font-size: 12px; flex-shrink: 0; border-radius: 8px; }
+.btn-action-small { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.1); }
+
+/* BARRA DE NAVEGAÇÃO INFERIOR FIXA DO APP */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; width: 100%; height: 65px;
+  background: #021227; border-top: 2px solid #05234c;
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  align-items: center; justify-content: center; z-index: 999;
+}
+.nav-tab {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: #64748b; font-size: 9px; font-weight: bold; text-decoration: none; cursor: pointer;
+}
+.nav-tab.active { color: var(--azul-botao); }
+.nav-tab .icon { font-size: 18px; margin-bottom: 2px; }
+
+/* BOTÃO DE ADICIONAR CENTRALIZADO EM DESTAQUE */
+.nav-tab.center-add { position: relative; top: -15px; height: 60px; }
+.nav-tab.center-add .icon-wrapper {
+  background: linear-gradient(135deg, #ffd700 0%, #cc9900 100%);
+  width: 52px; height: 52px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 10px rgba(204,153,0,0.4); border: 3px solid #021227;
+}
+.nav-tab.center-add .icon { color: #001635; font-size: 26px; font-weight: 900; margin: 0; }
+
+/* TELA DE LOGIN OVERLAY */
+#loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-principal); display: flex; align-items: center; justify-content: center; z-index: 99999; padding: 16px; }
+#loginBox { background: #fff; padding: 26px; border-radius: 16px; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+#appContent { display: none; }
 </style>
 </head>
 <body>
 
 <div id="loginOverlay">
   <div id="loginBox">
-    <h3 style="color:#072b63;margin-top:0;">🔐 Área Restrita Admin</h3>
-    <p style="color:#666;font-size:14px;">Digite a senha master para gerenciar:</p>
-    <input type="password" id="passInput" placeholder="Senha" onkeypress="if(event.key==='Enter') verificarSenha()"><br><br>
-    <button class="blue" style="width:100%" onclick="verificarSenha()">Entrar no Painel</button>
+    <h3 style="color: var(--azul-escuro); margin-top: 0;">🔐 Área Restrita Admin</h3>
+    <p style="color: #666; font-size: 14px; margin-bottom: 20px;">Insira a senha master do painel:</p>
+    <input type="password" id="passInput" placeholder="Senha Administrativa" onkeypress="if(event.key==='Enter') verificarSenha()"><br><br>
+    <button class="blue" style="width:100%; background: var(--azul-escuro);" onclick="verificarSenha()">Entrar no Painel</button>
   </div>
 </div>
 
 <div id="appContent">
   <header>
-    <h1>⚙️ PAINEL ADMIN</h1>
-    <p>Controle Móvel de Notas</p>
+    <h1>EMBAIXADORES DO REI</h1>
+    <p>• RANKING DA GINCANA •</p>
+    <button class="btn-telao" onclick="toggleTelao()">📺 MODO TELÃO</button>
   </header>
 
   <div class="container">
+    
     <div class="card">
-      <input id="cmd" list="nomes" placeholder="+5 João ou -2 Maria">
+      <h3><span>💻</span> TERMINAL DE COMANDOS</h3>
+      <div class="terminal-wrapper">
+        <input id="cmd" list="nomes" placeholder="Digite um comando ou nome (Ex: +5 João)">
+        <button class="btn-enviar-cmd" onclick="execCmd()">➔</button>
+      </div>
       <datalist id="nomes"></datalist>
+      
       <div class="grid-actions">
-        <button class="blue" onclick="execCmd()">Executar</button>
-        <button class="blue" onclick="toggleTelao()">📺 Modo Telão</button>
-        <button class="green" onclick="exportCSV()">Exportar CSV</button>
-        <button class="green" onclick="document.getElementById('importFile').click()">Importar CSV</button>
+        <button class="green" onclick="exportCSV()">📥 Exportar CSV</button>
+        <button class="blue" style="background:#4b6584;" onclick="document.getElementById('importFile').click()">📤 Importar CSV</button>
       </div>
       <input type="file" id="importFile" style="display:none" onchange="importCSV(event)">
     </div>
 
     <div class="card">
-      <h3>⚡ Pontuação Rápida</h3>
-      <input id="quickName" list="nomes" placeholder="Nome do participante"><br><br>
+      <h3><span>⚡</span> AÇÕES RÁPIDAS</h3>
+      <input id="quickName" list="nomes" placeholder="Selecione ou digite o nome do participante" style="margin-bottom: 12px;">
+      
       <div class="grid-quick">
-        <button class="green" onclick="quick(1)">+1</button>
-        <button class="green" onclick="quick(5)">+5</button>
-        <button class="red" onclick="quick(-1)">-1</button>
-        <button class="red" onclick="quick(-5)">-5</button>
+        <button class="btn-q-verde" onclick="quick(1)"><span>+1</span><span>PONTO</span></button>
+        <button class="btn-q-verde" onclick="quick(5)"><span>+5</span><span>PONTOS</span></button>
+        <button class="btn-q-verde" onclick="quick(10)"><span>+10</span><span>PONTOS</span></button>
+        <button class="btn-q-vermelho" onclick="quick(-1)"><span>-1</span><span>PONTO</span></button>
+        <button class="btn-q-vermelho" onclick="quick(-5)"><span>-5</span><span>PONTOS</span></button>
+        <button class="btn-q-vermelho" onclick="quick(-10)"><span>-10</span><span>PONTOS</span></button>
       </div>
     </div>
 
-    <div class="card" style="padding:8px;">
+    <div class="card" style="padding: 10px;">
       <div class="stats">
-        <div class="stat"><h3 id="totalP">0</h3><p>Partic.</p></div>
-        <div class="stat"><h3 id="topScore">0</h3><p>Maior</p></div>
-        <div class="stat"><h3 id="lastUpdate">-</h3><p>Última</p></div>
+        <div class="stat"><h4 id="totalP">0</h4><p>Partic.</p></div>
+        <div class="stat"><h4 id="topScore">0</h4><p>Maior Pont.</p></div>
+        <div class="stat"><h3 id="lastUpdate" style="margin:0; font-size:1.05em; color:var(--azul-escuro); font-weight:800;">-</h3><p>Última At.</p></div>
       </div>
     </div>
 
     <div class="card">
-      <h3>🥇 Lista de Participantes</h3>
+      <h3><span>🏆</span> RANKING GERAL</h3>
       <div id="ranking"></div>
     </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-tab active"><div class="icon">🏆</div><div>Ranking</div></div>
+    <div class="nav-tab" onclick="alert('Histórico em desenvolvimento')"><div class="icon">⏱️</div><div>Histórico</div></div>
+    <div class="nav-tab center-add" onclick="document.getElementById('quickName').focus()"><div class="icon-wrapper"><div class="icon">+</div></div><div>Adicionar</div></div>
+    <div class="nav-tab" onclick="document.getElementById('cmd').focus()"><div class="icon">👥</div><div>Participantes</div></div>
+    <div class="nav-tab" onclick="alert('Configurações em desenvolvimento')"><div class="icon">⚙️</div><div>Configurações</div></div>
   </div>
 </div>
 
@@ -148,6 +285,7 @@ button{border:none;cursor:pointer;font-weight:bold;touch-action:manipulation}
 
   let app, db, rankingRef, analytics;
   let dados = [];
+  let pontuouRecente = null; // Guarda quem mudou de nota para ativar o flash mostarda
 
   const hashCorreto = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9"; 
 
@@ -199,7 +337,6 @@ button{border:none;cursor:pointer;font-weight:bold;touch-action:manipulation}
     set(rankingRef, dataObject);
   }
 
-  // Lógica alterada para embutir a classe num-circle no admin também
   function renderMedal(i) {
     if (i == 0) return "🥇";
     if (i == 1) return "🥈";
@@ -216,42 +353,57 @@ button{border:none;cursor:pointer;font-weight:bold;touch-action:manipulation}
     
     itensAntigos.forEach(item => {
       const nome = item.dataset.nome;
-      if (nome) posicoesAntigas[nome] = item.offsetTop;
+      if (nome) posicoesAntigas[nome] = item.getBoundingClientRect().top;
     });
 
-    container.innerHTML=dados.map((p,i)=>`
-    <div class="item" data-nome="${p.nome}">
-      <div class="row-top">
-        <div class="medal">${renderMedal(i)}</div>
-        <div class="name">${p.nome}</div>
-        <div class="score">${p.pontos}</div>
-      </div>
-      <div class="row-controls">
-        <button class="green" onclick="change('${p.nome}',1)">+1</button>
-        <button class="green" onclick="change('${p.nome}',5)">+5</button>
-        <button class="red" onclick="change('${p.nome}',-1)">-1</button>
-        <button class="red" onclick="change('${p.nome}',-5)">-5</button>
-        <button class="blue" onclick="renamePlayer('${p.nome}')">✏️ Editar</button>
-        <button class="red" onclick="removePlayer('${p.nome}')">🗑️ Excluir</button>
-      </div>
-    </div>`).join("");
+    container.innerHTML = dados.map((p,i)=> {
+      // Verifica se o participante atual foi quem recebeu pontos recentemente para aplicar a classe de animação
+      const devesPiscar = (pontuouRecente === p.nome.toLowerCase()) ? 'flash-update' : '';
+      
+      return `
+      <div class="item ${devesPiscar}" data-nome="${p.nome}">
+        <div class="row-top">
+          <div class="medal">${renderMedal(i)}</div>
+          <div class="name">${p.nome}</div>
+          <div class="score">${p.pontos} pts</div>
+        </div>
+        <div class="row-controls">
+          <button class="btn-action-small" style="background:var(--verde);" onclick="change('${p.nome}',1)">+1</button>
+          <button class="btn-action-small" style="background:var(--verde);" onclick="change('${p.nome}',5)">+5</button>
+          <button class="btn-action-small" style="background:var(--vermelho);" onclick="change('${p.nome}',-1)">-1</button>
+          <button class="btn-action-small" style="background:var(--vermelho);" onclick="change('${p.nome}',-5)">-5</button>
+          <button class="btn-action-small" style="background:var(--azul-botao);" onclick="renamePlayer('${p.nome}')">✏️ Editar</button>
+          <button class="btn-action-small" style="background:#4b6584;" onclick="removePlayer('${p.nome}')">🗑️ Apagar</button>
+        </div>
+      </div>`;
+    }).join("");
 
+    // Aplica o efeito FLIP de movimentação
     Array.from(container.children).forEach(item => {
       const nome = item.dataset.nome;
       const posAntiga = posicoesAntigas[nome];
       if (posAntiga !== undefined) {
-        const posNova = item.offsetTop;
+        const posNova = item.getBoundingClientRect().top;
         const diferenca = posAntiga - posNova;
         if (diferenca !== 0) {
           item.style.transform = `translateY(${diferenca}px)`;
           item.style.transition = 'none';
           requestAnimationFrame(() => {
-            item.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+            item.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.4s ease';
             item.style.transform = 'translateY(0)';
           });
         }
       }
     });
+
+    // Se houver um card piscando amarelo, remove o efeito após 1.2 segundos
+    if(pontuouRecente) {
+      setTimeout(() => {
+        const elementoPiscando = container.querySelector('.flash-update');
+        if(elementoPiscando) elementoPiscando.classList.remove('flash-update');
+        pontuouRecente = null; 
+      }, 1200);
+    }
 
     document.getElementById("nomes").innerHTML=dados.map(p=>`<option value="${p.nome}">`).join("");
     document.getElementById("totalP").innerText=dados.length;
@@ -266,10 +418,13 @@ button{border:none;cursor:pointer;font-weight:bold;touch-action:manipulation}
   window.execCmd = function() {
     let t=document.getElementById("cmd").value.trim();
     let m=t.match(/([+-]\d+)\s+(.+)/);
-    if(!m){alert("Use o formato: +5 João");return;}
+    if(!m){alert("Use o formato do terminal: +5 João");return;}
     let valor=parseInt(m[1]), nome=m[2];
     let p=dados.find(x=>x.nome.toLowerCase()==nome.toLowerCase());
+    
+    pontuouRecente = nome.toLowerCase(); // Ativa o gatilho do flash
     if(p) p.pontos+=valor; else dados.push({nome:nome,pontos:valor});
+    
     document.getElementById("cmd").value="";
     saveData();
   }
@@ -277,6 +432,7 @@ button{border:none;cursor:pointer;font-weight:bold;touch-action:manipulation}
   window.change = function(nome, v) {
     let p=dados.find(x=>x.nome.toLowerCase()===nome.toLowerCase());
     if(p){
+      pontuouRecente = nome.toLowerCase(); // Ativa o gatilho do flash
       p.pontos+=v;
       saveData();
     }
@@ -284,12 +440,14 @@ button{border:none;cursor:pointer;font-weight:bold;touch-action:manipulation}
 
   window.quick = function(v) {
     let nome=document.getElementById("quickName").value.trim();
-    if(!nome) return;
+    if(!nome) { alert("Por favor, digite ou selecione um participante primeiro."); return; }
     let p=dados.find(x=>x.nome.toLowerCase()===nome.toLowerCase());
+    
+    pontuouRecente = nome.toLowerCase(); // Ativa o gatilho do flash
     if(p) {
       window.change(nome, v);
     } else {
-      if(confirm(`Criar "${nome}" com ${v} pontos?`)){
+      if(confirm(`O participante "${nome}" não existe. Deseja criá-lo com ${v} pontos?`)){
         dados.push({nome: nome, pontos: v});
         saveData();
       }
@@ -298,7 +456,7 @@ button{border:none;cursor:pointer;font-weight:bold;touch-action:manipulation}
   }
 
   window.renamePlayer = function(nome) {
-    let novo=prompt("Novo nome:",nome);
+    let novo=prompt("Novo nome do participante:",nome);
     if(!novo)return;
     let p = dados.find(x=>x.nome===nome);
     if(p) {
@@ -309,7 +467,7 @@ button{border:none;cursor:pointer;font-weight:bold;touch-action:manipulation}
   }
 
   window.removePlayer = function(nome) {
-    if(confirm("Eliminar "+nome+"?")){
+    if(confirm("Tem certeza de que deseja excluir "+nome+"?")){
       removePlayerFromData(nome);
       saveData();
     }
@@ -349,3 +507,5 @@ button{border:none;cursor:pointer;font-weight:bold;touch-action:manipulation}
 </script>
 </body>
 </html>
+
+```
