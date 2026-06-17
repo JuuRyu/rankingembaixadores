@@ -8,18 +8,39 @@
 :root{--azul:#072b63;--azul2:#0b4db3;--dourado:#ffc928}
 *{box-sizing:border-box} 
 body{margin:0;font-family:Arial,sans-serif;background:#eef2f7;padding-bottom:20px}
-header{background:linear-gradient(135deg,var(--azul),var(--azul2));color:#fff;padding:20px 15px;text-align:center;position:relative}
-header h1{color:var(--dourado);margin:0;font-size:1.8em;letter-spacing:1px}
-header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
-.btn-admin{position:absolute;top:15px;right:15px;background:rgba(255,255,255,0.15);color:#fff;text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.8em;font-weight:bold;border:1px solid rgba(255,255,255,0.3)}
+
+/* HEADER AJUSTADO PARA EVITAR SOBREPOSIÇÃO */
+header{
+  background: linear-gradient(135deg,var(--azul),var(--azul2));
+  color:#fff;
+  padding: 20px 15px;
+  text-align:center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+header h1{color:var(--dourado);margin:0;font-size:1.8em;letter-spacing:1px;width: 100%;max-width: 400px;}
+header p{margin:0;font-size:1em;opacity:0.9}
+
+.btn-admin{
+  background:rgba(255,255,255,0.15);
+  color:#fff;
+  text-decoration:none;
+  padding:6px 16px;
+  border-radius:8px;
+  font-size:0.85em;
+  font-weight:bold;
+  border:1px solid rgba(255,255,255,0.3);
+  display: inline-block;
+  margin-top: 5px;
+}
 .btn-admin:hover{background:rgba(255,255,255,0.3)}
+
 .container{padding:10px;max-width:600px;margin:auto}
 .card{background:#fff;border-radius:15px;padding:12px;margin-bottom:15px;box-shadow:0 4px 15px rgba(0,0,0,.08)}
 
-#ranking {
-  display: flex;
-  flex-direction: column;
-}
+#ranking { display: flex; flex-direction: column; }
 
 .item{
   display:flex;
@@ -34,7 +55,6 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
   will-change: transform;
 }
 
-/* CONTAINER DA MEDALHA / POSIÇÃO */
 .medal{
   display: flex;
   align-items: center;
@@ -47,7 +67,6 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
   flex-shrink: 0;
 }
 
-/* CÍRCULO BRANCO PARA O NÚMERO EM AZUL (4º LUGAR PARA BAIXO) */
 .num-circle {
   background: #fff;
   color: var(--azul2);
@@ -63,6 +82,12 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
 
 .name{flex:1;font-size:16px;font-weight:bold;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .score{font-size:20px;color:var(--dourado);font-weight:bold;white-space:nowrap;flex-shrink:0}
+
+/* ESTILO REDUZIDO APÓS A 10ª POSIÇÃO */
+.item-small .name { font-size: 13px; opacity: 0.85; }
+.item-small .score { font-size: 17px; }
+.item-small { padding: 10px 12px; margin: 4px 0; }
+
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
 .stat{background:#fff;padding:10px 5px;border-radius:12px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)}
 .stat h3{margin:0;font-size:1.1em;color:var(--azul2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -70,10 +95,9 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
 
 @media(max-width:360px){
   header h1{font-size:1.5em}
-  .name{font-size:14px}
+  .name {font-size:14px}
+  .item-small .name { font-size: 12px; }
   .score{font-size:18px}
-  .stat h3{font-size:1em}
-  .stat p{font-size:0.7em}
 }
 </style>
 </head>
@@ -82,7 +106,7 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
 <header>
   <h1>🏆 RANKING DA GINCANA</h1>
   <p>Classificação em Tempo Real</p>
-  <a href="admin.html" class="btn-admin">✏️ Admin</a>
+  <a href="admin.html" class="btn-admin">✏️ Painel Admin</a>
 </header>
 
 <div class="container">
@@ -118,12 +142,11 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
 
   let ultimoLider = null;
 
-  // Lógica alterada para embutir a classe num-circle a partir do 4º lugar
-  function renderMedal(i) {
-    if (i == 0) return "🥇";
-    if (i == 1) return "🥈";
-    if (i == 2) return "🥉";
-    return `<span class="num-circle">${i + 1}</span>`;
+  function renderMedalOrPosition(posExibida) {
+    if (posExibida == 1) return "🥇";
+    if (posExibida == 2) return "🥈";
+    if (posExibida == 3) return "🥉";
+    return `<span class="num-circle">${posExibida}</span>`;
   }
 
   function tocarSomLider() {
@@ -163,13 +186,29 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
         if (nome) posicoesAntigas[nome] = item.offsetTop;
       });
 
-      container.innerHTML = dados.map((p,i)=>`
-        <div class="item" data-nome="${p.nome}">
-          <div class="medal">${renderMedal(i)}</div>
-          <div class="name">${p.nome}</div>
-          <div class="score">${p.pontos} pts</div>
-        </div>
-      `).join("");
+      // LÓGICA DE EMPATE COM POSIÇÕES IGUAIS
+      let htmlOutput = "";
+      let posicaoAtual = 1;
+
+      dados.forEach((p, i) => {
+        // Se não for o primeiro e a pontuação for menor que a do anterior, aumenta a posição real para o índice correto
+        if (i > 0 && p.pontos < dados[i - 1].pontos) {
+          posicaoAtual = i + 1;
+        }
+
+        // Define se o card deve ficar menor (após a 10ª posição real)
+        const classeTamanho = (posicaoAtual > 10) ? 'item-small' : '';
+
+        htmlOutput += `
+          <div class="item ${classeTamanho}" data-nome="${p.nome}">
+            <div class="medal">${renderMedalOrPosition(posicaoAtual)}</div>
+            <div class="name">${p.nome}</div>
+            <div class="score">${p.pontos} pts</div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = htmlOutput;
 
       requestAnimationFrame(() => {
         Array.from(container.children).forEach(item => {
@@ -184,7 +223,6 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
               item.style.transition = 'none';
               item.style.transform = `translateY(${diferenca}px)`;
               
-              刻意delay
               setTimeout(() => {
                 item.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
                 item.style.transform = 'translateY(0)';
