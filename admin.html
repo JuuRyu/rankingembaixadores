@@ -30,7 +30,33 @@ button{border:none;cursor:pointer;font-weight:bold;touch-action:manipulation}
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .row-top{display:flex;align-items:center;gap:8px;width:100%;margin-bottom:8px}
-.medal{font-size:20px;font-weight:bold;width:28px;text-align:center}
+
+.medal{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size:20px;
+  font-weight:bold;
+  width:28px;
+  height: 28px;
+  text-align:center;
+  flex-shrink: 0;
+}
+
+/* CIRCULO PARA PAGINA ADMIN */
+.num-circle {
+  background: #fff;
+  color: var(--azul2);
+  font-size: 13px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
 .name{flex:1;font-size:16px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .score{font-size:20px;color:var(--dourado);font-weight:bold;padding-right:5px}
 
@@ -173,7 +199,13 @@ button{border:none;cursor:pointer;font-weight:bold;touch-action:manipulation}
     set(rankingRef, dataObject);
   }
 
-  function medal(i){return i==0?"🥇":i==1?"🥈":i==2?"🥉":(i+1);}
+  // Lógica alterada para embutir a classe num-circle no admin também
+  function renderMedal(i) {
+    if (i == 0) return "🥇";
+    if (i == 1) return "🥈";
+    if (i == 2) return "🥉";
+    return `<span class="num-circle">${i + 1}</span>`;
+  }
 
   function updateInterface() {
     dados.sort((a,b)=>b.pontos-a.pontos);
@@ -183,14 +215,14 @@ button{border:none;cursor:pointer;font-weight:bold;touch-action:manipulation}
     const posicoesAntigas = {};
     
     itensAntigos.forEach(item => {
-      const nome = item.querySelector(".name")?.innerText;
-      if (nome) posicoesAntigas[nome] = item.getBoundingClientRect().top;
+      const nome = item.dataset.nome;
+      if (nome) posicoesAntigas[nome] = item.offsetTop;
     });
 
     container.innerHTML=dados.map((p,i)=>`
     <div class="item" data-nome="${p.nome}">
       <div class="row-top">
-        <div class="medal">${medal(i)}</div>
+        <div class="medal">${renderMedal(i)}</div>
         <div class="name">${p.nome}</div>
         <div class="score">${p.pontos}</div>
       </div>
@@ -208,7 +240,7 @@ button{border:none;cursor:pointer;font-weight:bold;touch-action:manipulation}
       const nome = item.dataset.nome;
       const posAntiga = posicoesAntigas[nome];
       if (posAntiga !== undefined) {
-        const posNova = item.getBoundingClientRect().top;
+        const posNova = item.offsetTop;
         const diferenca = posAntiga - posNova;
         if (diferenca !== 0) {
           item.style.transform = `translateY(${diferenca}px)`;
