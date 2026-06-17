@@ -16,7 +16,6 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
 .container{padding:10px;max-width:600px;margin:auto}
 .card{background:#fff;border-radius:15px;padding:12px;margin-bottom:15px;box-shadow:0 4px 15px rgba(0,0,0,.08)}
 
-/* CORREÇÃO DO CONTAINER DE ANIMAÇÃO */
 #ranking {
   display: flex;
   flex-direction: column;
@@ -32,9 +31,36 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
   border-radius:12px;
   margin:6px 0;
   box-shadow:0 2px 5px rgba(0,0,0,.15);
-  will-change: transform; /* Avisa o navegador para preparar a animação */
+  will-change: transform;
 }
-.medal{font-size:24px;width:35px;text-align:center;font-weight:bold;flex-shrink:0}
+
+/* CONTAINER DA MEDALHA / POSIÇÃO */
+.medal{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  width: 35px;
+  height: 35px;
+  text-align: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+/* CÍRCULO BRANCO PARA O NÚMERO EM AZUL (4º LUGAR PARA BAIXO) */
+.num-circle {
+  background: #fff;
+  color: var(--azul2);
+  font-size: 16px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
 .name{flex:1;font-size:16px;font-weight:bold;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .score{font-size:20px;color:var(--dourado);font-weight:bold;white-space:nowrap;flex-shrink:0}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
@@ -92,7 +118,13 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
 
   let ultimoLider = null;
 
-  function medal(i){return i==0?"🥇":i==1?"🥈":i==2?"🥉":(i+1);}
+  // Lógica alterada para embutir a classe num-circle a partir do 4º lugar
+  function renderMedal(i) {
+    if (i == 0) return "🥇";
+    if (i == 1) return "🥈";
+    if (i == 2) return "🥉";
+    return `<span class="num-circle">${i + 1}</span>`;
+  }
 
   function tocarSomLider() {
     try {
@@ -126,22 +158,19 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
       const itensAntigos = Array.from(container.children);
       const posicoesAntigas = {};
       
-      // 1. Mapeia com precisão a posição no topo de cada card antes de atualizar
       itensAntigos.forEach(item => {
         const nome = item.dataset.nome;
         if (nome) posicoesAntigas[nome] = item.offsetTop;
       });
 
-      // 2. Renderiza o novo HTML
       container.innerHTML = dados.map((p,i)=>`
         <div class="item" data-nome="${p.nome}">
-          <div class="medal">${medal(i)}</div>
+          <div class="medal">${renderMedal(i)}</div>
           <div class="name">${p.nome}</div>
           <div class="score">${p.pontos} pts</div>
         </div>
       `).join("");
 
-      // 3. Aplica a transição calculando a diferença real de deslocamento (offsetTop)
       requestAnimationFrame(() => {
         Array.from(container.children).forEach(item => {
           const nome = item.dataset.nome;
@@ -152,11 +181,10 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
             const diferenca = posAntiga - posNova;
             
             if (diferenca !== 0) {
-              // Trava temporariamente o card na posição antiga sem transição
               item.style.transition = 'none';
               item.style.transform = `translateY(${diferenca}px)`;
               
-              // Força o navegador a aplicar o deslize de forma limpa na próxima renderização
+              刻意delay
               setTimeout(() => {
                 item.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
                 item.style.transform = 'translateY(0)';
@@ -166,7 +194,6 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
         });
       });
 
-      // --- ALERTA SONORO ---
       if (dados.length > 0) {
         const liderAtual = dados[0].nome;
         if (ultimoLider !== null && ultimoLider !== liderAtual && dados[0].pontos > 0) {
