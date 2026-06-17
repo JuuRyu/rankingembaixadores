@@ -16,11 +16,23 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
 .container{padding:10px;max-width:600px;margin:auto}
 .card{background:#fff;border-radius:15px;padding:12px;margin-bottom:15px;box-shadow:0 4px 15px rgba(0,0,0,.08)}
 
-/* Container preparado para animações */
-#ranking {position: relative;}
+/* CORREÇÃO DO CONTAINER DE ANIMAÇÃO */
+#ranking {
+  display: flex;
+  flex-direction: column;
+}
 
-.item{display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,#001b42,#003d8f);color:#fff;padding:14px 12px;border-radius:12px;margin:8px 0;box-shadow:0 2px 5px rgba(0,0,0,.15);
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+.item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:linear-gradient(90deg,#001b42,#003d8f);
+  color:#fff;
+  padding:14px 12px;
+  border-radius:12px;
+  margin:6px 0;
+  box-shadow:0 2px 5px rgba(0,0,0,.15);
+  will-change: transform; /* Avisa o navegador para preparar a animação */
 }
 .medal{font-size:24px;width:35px;text-align:center;font-weight:bold;flex-shrink:0}
 .name{flex:1;font-size:16px;font-weight:bold;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -82,11 +94,10 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
 
   function medal(i){return i==0?"🥇":i==1?"🥈":i==2?"🥉":(i+1);}
 
-  // Função para tocar som de trombeta/celebração nativo (Sem precisar de arquivos .mp3)
   function tocarSomLider() {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const notas = [523.25, 659.25, 783.99, 1046.50]; // Notas musicais festivas
+      const notas = [523.25, 659.25, 783.99, 1046.50]; 
       notas.forEach((frequencia, i) => {
         setTimeout(() => {
           const osc = ctx.createOscillator();
@@ -101,7 +112,7 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
           osc.stop(ctx.currentTime + 0.4);
         }, i * 150);
       });
-    } catch (e) { console.log("Áudio bloqueado pelo navegador até interação do usuário."); }
+    } catch (e) { console.log("Áudio pendente de clique."); }
   }
 
   if (rankingRef) {
@@ -111,18 +122,17 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
       
       dados.sort((a,b)=>b.pontos-a.pontos);
 
-      // --- EFEITO FLIP PARA ANIMAÇÃO DAS POSIÇÕES ---
       const container = document.getElementById("ranking");
       const itensAntigos = Array.from(container.children);
       const posicoesAntigas = {};
       
-      // 1. Guarda a posição antiga de cada jogador na tela
+      // 1. Mapeia com precisão a posição no topo de cada card antes de atualizar
       itensAntigos.forEach(item => {
-        const nome = item.querySelector(".name")?.innerText;
-        if (nome) posicoesAntigas[nome] = item.getBoundingClientRect().top;
+        const nome = item.dataset.nome;
+        if (nome) posicoesAntigas[nome] = item.offsetTop;
       });
 
-      // 2. Monta o novo HTML com as posições atualizadas
+      // 2. Renderiza o novo HTML
       container.innerHTML = dados.map((p,i)=>`
         <div class="item" data-nome="${p.nome}">
           <div class="medal">${medal(i)}</div>
@@ -131,28 +141,32 @@ header p{margin:5px 0 0 0;font-size:1em;opacity:0.9}
         </div>
       `).join("");
 
-      // 3. Aplica a animação de deslizar baseada na diferença de posições
-      Array.from(container.children).forEach(item => {
-        const nome = item.dataset.nome;
-        const posAntiga = posicoesAntigas[nome];
-        if (posAntiga !== undefined) {
-          const posNova = item.getBoundingClientRect().top;
-          const diferenca = posAntiga - posNova;
-          if (diferenca !== 0) {
-            // Volta o elemento para a posição antiga instantaneamente
-            item.style.transform = `translateY(${diferenca}px)`;
-            item.style.transition = 'none';
-            // Força o navegador a processar o estado
-            requestAnimationFrame(() => {
-              // Desliza suavemente até a nova posição correta
-              item.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
-              item.style.transform = 'translateY(0)';
-            });
+      // 3. Aplica a transição calculando a diferença real de deslocamento (offsetTop)
+      requestAnimationFrame(() => {
+        Array.from(container.children).forEach(item => {
+          const nome = item.dataset.nome;
+          const posAntiga = posicoesAntigas[nome];
+          
+          if (posAntiga !== undefined) {
+            const posNova = item.offsetTop;
+            const diferenca = posAntiga - posNova;
+            
+            if (diferenca !== 0) {
+              // Trava temporariamente o card na posição antiga sem transição
+              item.style.transition = 'none';
+              item.style.transform = `translateY(${diferenca}px)`;
+              
+              // Força o navegador a aplicar o deslize de forma limpa na próxima renderização
+              setTimeout(() => {
+                item.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+                item.style.transform = 'translateY(0)';
+              }, 20);
+            }
           }
-        }
+        });
       });
 
-      // --- ALERTA SONORO DE MUDANÇA DE LÍDER ---
+      // --- ALERTA SONORO ---
       if (dados.length > 0) {
         const liderAtual = dados[0].nome;
         if (ultimoLider !== null && ultimoLider !== liderAtual && dados[0].pontos > 0) {
